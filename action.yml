@@ -34,7 +34,7 @@ runs:
         if [[ "${{ inputs.operation }}" == "get" ]]; then
             keyFormat='{ "repo": { "S": "%s" }, "workflowBranch": { "S": "%s" } }'
             keyData=$(printf "$keyFormat" ${{ inputs.ownerRepo }} ${{ inputs.workflowBranch }})
-            IFS=: read lsb versionWithBuild << $(aws dynamodb get-item --table-name $TABLE_NAME --key "$keyData" | jq -r '.Item.lsb.S + ":" + .Item.versionWithBuild.S')
+            read lsb versionWithBuild << $(aws dynamodb get-item --table-name $TABLE_NAME --key "$keyData" | jq -r '.Item.lsb.S + " " + .Item.versionWithBuild.S')
         elif [[ "${{ inputs.operation }}" == "put" ]]; then
             if [[ "${{ inputs.putLsb }}" == "" ]]; then
                 echo "Error: putLsb is unset"
