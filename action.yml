@@ -27,35 +27,14 @@ runs:
   steps:
     - name: Operation
       id: get
-      run: |
-        set -x
-        lsb=""
-        versionWithBuild=""
-        if [[ "${{ inputs.operation }}" == "get" ]]; then
-            keyFormat='{ "repo": { "S": "%s" }, "workflowBranch": { "S": "%s" } }'
-            keyData=$(printf "$keyFormat" ${{ inputs.ownerRepo }} ${{ inputs.workflowBranch }})
-            IFS=: read lsb versionWithBuild << $(aws dynamodb get-item --table-name $TABLE_NAME --key "$keyData" | jq -r '.Item.lsb.S + ":" + .Item.versionWithBuild.S')
-        elif [[ "${{ inputs.operation }}" == "put" ]]; then
-            if [[ "${{ inputs.putLsb }}" == "" ]]; then
-                echo "Error: putLsb is unset"
-                exit 1
-            fi
-            if [[ "${{ inputs.putVersionWithBuild }}" == "" ]]; then
-                echo "Error: putVersionWithBuild is unset"
-                exit 1
-            fi
-            seconds=$((${{ inputs.expiryMons }} * 31 * 24 * 60 * 60))
-            expires=$(( $(date +%s) + ${seconds} ))
-
-            itemFormat='{ "repo": { "S": "%s" }, "workflowBranch": { "S": "%s" }, "lsb": { "S": "%s" }, "versionWithBuild": { "S": "%s" }, "expires": { "N": "%s" } }'
-            itemData=$(printf "$itemFormat" ${{ inputs.ownerRepo }} ${{ inputs.workflowBranch }} ${{ inputs.putLsb }} ${{ inputs.putVersionWithBuild }} $expires)
-            aws dynamodb put-item --table-name $TABLE_NAME --item "$itemData"
-        else
-            echo "Error: unrecognised operation '${{ inputs.operation }}'"
-            exit 1
-        fi
-        echo "::set-output name=value::${lsb}"
-        echo "::set-output name=versionWithBuild::${versionWithBuild}"
+      run: >
+        ${{ github.action_path }}/action.bash
+        "${{ inputs.operation }}"
+        "${{ inputs.ownerRepo }}"
+        "${{ inputs.workflowBranch }}"
+        "${{ inputs.putLsb }}"
+        "${{ inputs.putVersionWithBuild }}"
+        "${{ inputs.expiryMons }}"
       env:
         AWS_DEFAULT_REGION: us-west-2
         AWS_REGION: us-west-2
