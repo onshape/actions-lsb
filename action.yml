@@ -21,6 +21,9 @@ outputs:
   getLsb:
     description: "get operation only: lsb SHA"
     value: ${{ steps.get.outputs.value }}
+  getVersionWithBuild:
+    description: "get operation only: lsb version with build"
+    value: ${{ steps.get.outputs.version_with_build }}
 
 runs:
   using: "composite"

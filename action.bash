@@ -11,8 +11,8 @@ putLsb=$4
 putVersionWithBuild=$5
 expiryMons=$6
 
-lsb=$putLsb
-versionWithBuild=$putVersionWithBuild
+lsb=''
+versionWithBuild=''
 
 if [[ "${operation}" == "get" ]]; then
     keyFormat='{ "repo": { "S": "%s" }, "workflowBranch": { "S": "%s" } }'
