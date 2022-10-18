@@ -39,5 +39,5 @@ else
     echo "Error: unrecognised operation '${operation}'"
     exit 1
 fi
-echo "::set-output name=value::${lsb}"
-echo "::set-output name=version_with_build::${versionWithBuild}"
+echo "value=${lsb}" >> $GITHUB_OUTPUT
+echo "version_with_build=${versionWithBuild}" >> $GITHUB_OUTPUT
