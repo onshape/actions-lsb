@@ -4,6 +4,8 @@ set -o errexit
 set -o pipefail
 set -o xtrace
 
+[[ $(uname) == "Darwin" ]] && export PATH=/usr/local/bin:$PATH
+
 operation=$1
 ownerRepo=$2
 workflowBranch=$3
